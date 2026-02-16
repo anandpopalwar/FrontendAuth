@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { AntdRegistry } from "@ant-design/nextjs-registry";
+import { ConfigProvider, theme } from "antd";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,15 +22,33 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-950`}
       >
-        {children}
+        <AntdRegistry>
+          <ConfigProvider
+            theme={{
+              algorithm: [theme.darkAlgorithm, theme.compactAlgorithm],
+              token: {
+                colorPrimary: "#1677ff",
+                borderRadius: 10,
+              },
+            }}
+          >
+            <div className="flex justify-center align-middle gap-5 fixed top-0 left-1">
+              <Link href="/">Home</Link>
+              <Link href="/login">Login</Link>
+              <Link href="/register">Register</Link>
+              <Link href="/dashboard">Dashboard</Link>
+            </div>
+            {children}
+          </ConfigProvider>
+        </AntdRegistry>
       </body>
     </html>
   );

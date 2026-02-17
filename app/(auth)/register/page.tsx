@@ -6,7 +6,7 @@ import { Button, Card, Form, Input } from "antd";
 import { useForm } from "antd/es/form/Form";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import useMessage from "antd/es/message/useMessage";
+import { useGlobalContext } from "@/context/maincontext";
 
 const formItemLayout: FormProps = {
   labelCol: {
@@ -42,7 +42,7 @@ interface Formdata {
 const Registeruser: React.FC = () => {
   const router = useRouter();
   const [form] = useForm();
-  const [messageApi, contextHolder] = useMessage();
+  const { msg } = useGlobalContext();
 
   const onFinish = async (values: Formdata) => {
     // console.log("Received values of form: ", values);
@@ -54,111 +54,106 @@ const Registeruser: React.FC = () => {
         password: values.password,
       });
       console.log(res);
-      messageApi.success(res?.data?.messege);
+      msg.success(res?.data?.message);
 
       router.push("/login");
     } catch (err) {
       console.log(err);
       if (axios.isAxiosError(err)) {
-        messageApi.warning(err.response?.data?.messege);
+        msg.warning(err.response?.data?.message);
       }
     }
   };
 
   return (
-    <>
-      {contextHolder}
-      <Card title="Register" className="w-full max-w-md shadow-xl">
-        <Form
-          {...formItemLayout}
-          form={form}
-          layout={"vertical"}
-          name="user_register"
-          onFinish={onFinish}
-          style={{ maxWidth: 600 }}
-          scrollToFirstError
+    <Card title="Register" className="w-full max-w-md shadow-xl">
+      <Form
+        {...formItemLayout}
+        form={form}
+        layout={"vertical"}
+        name="user_register"
+        onFinish={onFinish}
+        style={{ maxWidth: 600 }}
+        scrollToFirstError
+      >
+        <Form.Item
+          name="username"
+          label="Username"
+          tooltip="What do you want others to call you?"
+          rules={[
+            {
+              required: true,
+              message: "Please input your username!",
+              whitespace: true,
+            },
+          ]}
         >
-          <Form.Item
-            name="username"
-            label="Username"
-            tooltip="What do you want others to call you?"
-            rules={[
-              {
-                required: true,
-                message: "Please input your username!",
-                whitespace: true,
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
+          <Input />
+        </Form.Item>
 
-          <Form.Item
-            name="email"
-            label="E-mail"
-            rules={[
-              {
-                type: "email",
-                message: "The input is not valid E-mail!",
-              },
-              {
-                required: true,
-                message: "Please input your E-mail!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
+        <Form.Item
+          name="email"
+          label="E-mail"
+          rules={[
+            {
+              type: "email",
+              message: "The input is not valid E-mail!",
+            },
+            {
+              required: true,
+              message: "Please input your E-mail!",
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
 
-          <Form.Item
-            name="password"
-            label="Password"
-            rules={[
-              {
-                required: true,
-                message: "Please input your password!",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input.Password />
-          </Form.Item>
+        <Form.Item
+          name="password"
+          label="Password"
+          rules={[
+            {
+              required: true,
+              message: "Please input your password!",
+            },
+          ]}
+          hasFeedback
+        >
+          <Input.Password />
+        </Form.Item>
 
-          <Form.Item
-            name="confirm"
-            label="Confirm Password"
-            dependencies={["password"]}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: "Please confirm your password!",
+        <Form.Item
+          name="confirm"
+          label="Confirm Password"
+          dependencies={["password"]}
+          hasFeedback
+          rules={[
+            {
+              required: true,
+              message: "Please confirm your password!",
+            },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue("password") === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(
+                  new Error("The new password that you entered do not match!"),
+                );
               },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue("password") === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error(
-                      "The new password that you entered do not match!",
-                    ),
-                  );
-                },
-              }),
-            ]}
-          >
-            <Input.Password />
-          </Form.Item>
+            }),
+          ]}
+        >
+          <Input.Password />
+        </Form.Item>
 
-          <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit">
-              Register
-            </Button>
-          </Form.Item>
-        </Form>
-      </Card>
-    </>
+        <Form.Item {...tailFormItemLayout}>
+          <Button type="primary" htmlType="submit">
+            Register
+          </Button>
+        </Form.Item>
+      </Form>
+    </Card>
   );
 };
 

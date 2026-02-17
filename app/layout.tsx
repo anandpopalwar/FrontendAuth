@@ -4,6 +4,7 @@ import "./globals.css";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { ConfigProvider, theme } from "antd";
 import Link from "next/link";
+import GlobalContextWraper from "@/context/maincontext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,7 +47,7 @@ export default function RootLayout({
               <Link href="/register">Register</Link>
               <Link href="/dashboard">Dashboard</Link>
             </div>
-            {children}
+            <GlobalContextWraper>{children}</GlobalContextWraper>
           </ConfigProvider>
         </AntdRegistry>
       </body>

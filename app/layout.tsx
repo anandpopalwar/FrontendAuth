@@ -41,13 +41,15 @@ export default function RootLayout({
               },
             }}
           >
-            <div className="flex justify-center align-middle gap-5 fixed top-0 left-1">
+            <div className="flex justify-center align-middle gap-5 absolute top-0 left-1">
               <Link href="/">Home</Link>
               <Link href="/login">Login</Link>
               <Link href="/register">Register</Link>
               <Link href="/dashboard">Dashboard</Link>
             </div>
-            <GlobalContextWraper>{children}</GlobalContextWraper>
+            <GlobalContextWraper>
+              <div className="box-border min-h-screen">{children}</div>
+            </GlobalContextWraper>
           </ConfigProvider>
         </AntdRegistry>
       </body>

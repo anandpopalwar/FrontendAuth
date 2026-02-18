@@ -46,8 +46,10 @@ const Registeruser: React.FC = () => {
 
   const onFinish = async (values: Formdata) => {
     // console.log("Received values of form: ", values);
+    const baseUrl: string | undefined = process.env.NEXT_PUBLIC_SERVER_URL;
+
     try {
-      const url: string = "http://localhost:8000/api/v1/auth/register";
+      const url: string = baseUrl + "/auth/register";
       const res = await axios.post(url, {
         username: values.username,
         email: values.email,

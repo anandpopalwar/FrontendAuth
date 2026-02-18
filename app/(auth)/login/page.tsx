@@ -5,7 +5,7 @@ import type { FormItemProps, FormProps } from "antd";
 import { Button, Card, Form, Input } from "antd";
 import { useForm } from "antd/es/form/Form";
 import api from "@/lib/api/axios";
-import { isAxiosError } from "axios";
+import axios, { isAxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useGlobalContext } from "@/context/maincontext";
 
@@ -40,13 +40,15 @@ interface Formdata {
 }
 
 const Loginuser: React.FC = () => {
+  const { setUserData } = useGlobalContext();
   const router = useRouter();
   const [form] = useForm();
   const { msg } = useGlobalContext();
   const onFinish = async (values: Formdata) => {
     try {
-      const { data } = await api.get("auth/login", {
-        params: values,
+      const baseUrl: string | undefined = process.env.NEXT_PUBLIC_SERVER_URL;
+      const { data } = await axios.post(baseUrl + "/auth/login", {
+        ...values,
       });
 
       console.log(data);
@@ -56,6 +58,9 @@ const Loginuser: React.FC = () => {
         err.message = "access token not found";
       }
       document.cookie = `accessToken=${data?.body.accessToken}; path=/`;
+      setUserData({
+        ...data?.body,
+      });
       msg.success(data?.message);
       router.push("/dashboard");
     } catch (err) {

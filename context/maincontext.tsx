@@ -1,9 +1,27 @@
+"use client";
+
 import { MessageInstance } from "antd/es/message/interface";
 import useMessage from "antd/es/message/useMessage";
-import { createContext, JSX, ReactNode, useContext } from "react";
+import {
+  createContext,
+  Dispatch,
+  JSX,
+  ReactNode,
+  SetStateAction,
+  useContext,
+  useState,
+} from "react";
 
+interface UserTypes {
+  username: string | null;
+  _id: string | null;
+  accessToken: string | null;
+  email: string | null;
+}
 interface GlobalContextTypes {
   msg: MessageInstance;
+  userData: UserTypes;
+  setUserData: Dispatch<SetStateAction<UserTypes>>;
 }
 interface Props {
   children: ReactNode;
@@ -13,11 +31,19 @@ const GlobalContext = createContext<GlobalContextTypes | null>(null);
 
 const GlobalContextWraper = ({ children }: Props): JSX.Element => {
   const [msg, msgArea] = useMessage();
+  const [userData, setUserData] = useState<UserTypes>({
+    username: "",
+    _id: "",
+    accessToken: "",
+    email: "",
+  });
 
   return (
     <GlobalContext.Provider
       value={{
         msg,
+        userData,
+        setUserData,
       }}
     >
       {msgArea}

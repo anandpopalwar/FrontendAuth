@@ -6,10 +6,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 const Dashboard = () => {
-  const { msg } = useGlobalContext();
+  const { msg, userData } = useGlobalContext();
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [value, setValue] = useState<number>(0);
   const router = useRouter();
+
+  
   const removeCookie = async () => {
     try {
       const res = await api.delete("/auth/logout");
@@ -51,10 +53,11 @@ const Dashboard = () => {
     <div className="w-full h-full flex justify-center align-middle ">
       <button
         type="submit"
-        className="absolute right-2 top-0 cursor-pointer"
+        className="absolute right-2 top-0 cursor-pointer hover:underline flex justify-center align-middle gap-4"
         id="logoutbtn"
         onClick={removeCookie}
       >
+        {userData.username}
         logout
       </button>
       <div className="grid justify-center">

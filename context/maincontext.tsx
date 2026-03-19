@@ -12,7 +12,7 @@ import {
   useState,
 } from "react";
 
-interface UserTypes {
+export interface UserTypes {
   username: string | null;
   _id: string | null;
   accessToken: string | null;

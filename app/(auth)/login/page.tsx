@@ -1,13 +1,15 @@
 "use client";
 
+import env from "@/config/env";
 import React from "react";
 import type { FormItemProps, FormProps } from "antd";
-import { Button, Card, Form, Input } from "antd";
+import { Button, Card, Divider, Form, Input } from "antd";
 import { useForm } from "antd/es/form/Form";
-import api from "@/lib/api/axios";
-import axios, { isAxiosError } from "axios";
+
+import axios, {  isAxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useGlobalContext } from "@/context/maincontext";
+import { GoogleOutlined } from "@ant-design/icons";
 
 const formItemLayout: FormProps = {
   labelCol: {
@@ -44,10 +46,10 @@ const Loginuser: React.FC = () => {
   const router = useRouter();
   const [form] = useForm();
   const { msg } = useGlobalContext();
+
   const onFinish = async (values: Formdata) => {
     try {
-      const baseUrl: string | undefined = process.env.NEXT_PUBLIC_SERVER_URL;
-      const { data } = await axios.post(baseUrl + "/auth/login", {
+      const { data } = await axios.post(env.apiBaseUrl + "/auth/login", {
         ...values,
       });
 
@@ -69,6 +71,23 @@ const Loginuser: React.FC = () => {
         msg.warning(err.response?.data?.message);
       } else {
         msg.warning("Access token not found");
+      }
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      console.log(env.apiBaseUrl);
+      const data = await axios.post(env.apiBaseUrl + "/auth/login/google/url");
+      console.log(data.data);
+      window.location.href = data.data.url;
+    } catch (err) {
+
+      if (isAxiosError(err)) {
+        msg.warning(err.response?.data?.message);
+      } else {
+        console.log(err);
+        msg.error("something went wrong");
       }
     }
   };
@@ -119,6 +138,16 @@ const Loginuser: React.FC = () => {
             Login
           </Button>
         </Form.Item>
+
+        <Divider plain>or continue with</Divider>
+
+        <Button
+          icon={<GoogleOutlined />}
+          onClick={handleGoogleLogin} // onClick is the event listener
+          block
+        >
+          Continue with Google
+        </Button>
       </Form>
     </Card>
   );

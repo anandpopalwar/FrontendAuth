@@ -1,3 +1,4 @@
+import env from "@/config/env";
 import axios, {
   AxiosError,
   AxiosInstance,
@@ -9,7 +10,7 @@ interface customInternalAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry: boolean;
 }
 const api: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
+  baseURL: env.apiBaseUrl,
 });
 
 export default api;
@@ -58,8 +59,11 @@ api.interceptors.response.use(
         document.cookie = `accessToken=${data?.body.accessToken}; path=/`;
 
         return api(originalRequest);
-      } catch (refreshErr: AxiosError) {
-        if (refreshErr.response?.status === 404) {
+      } catch (refreshErr: unknown) {
+        if (
+          axios.isAxiosError(refreshErr) &&
+          refreshErr.response?.status === 404
+        ) {
           // 1. Clear the cookie by setting an expired date
           document.cookie = "accessToken=; path=/;";
 
@@ -81,7 +85,7 @@ api.interceptors.response.use(
   },
 );
 
-const getCookieValue = (cookieStr: string, name: string): string => {
+export const getCookieValue = (cookieStr: string, name: string): string => {
   const match = cookieStr.match(new RegExp("(^| )" + name + "=([^;]+)"));
   return match ? match[2] : "";
 };
